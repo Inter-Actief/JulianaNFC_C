@@ -3,14 +3,16 @@
 #include <Windows.h>
 #include <CommCtrl.h>
 #include <shellapi.h>
+#include <Shlwapi.h>
 #include <strsafe.h>
 
 #include "resource.h"
 #include "version.h"
 
 #define APPLICATION_NAME L"JulianaNFC"
-
 #define CLASSNAME L"JulianaNFCClass"
+#define TLS_CERT_FILENAME "juliana.crt"
+#define TLS_KEY_FILENAME "juliana.key"
 
 #define EVER ;;
 

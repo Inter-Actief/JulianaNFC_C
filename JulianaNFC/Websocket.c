@@ -90,9 +90,17 @@ VOID websocket_init()
 	info.vhost_name = "localhost";
 	info.port = 3000;
 	info.protocols = protocols;
-	info.ssl_cert_filepath = "juliana.pem";
-	info.ssl_private_key_filepath = "juliana.key.pem";
-	//info.options = LWS_SERVER_OPTION_DO_SSL_GLOBAL_INIT;
+
+	if (PathFileExists(TEXT(TLS_CERT_FILENAME)) && PathFileExists(TEXT(TLS_KEY_FILENAME))) {
+		info.ssl_cert_filepath = TLS_CERT_FILENAME;
+		info.ssl_private_key_filepath = TLS_KEY_FILENAME;
+		info.options = LWS_SERVER_OPTION_DO_SSL_GLOBAL_INIT;
+		console_append(L"SSL geactiveerd");
+	}
+	else {
+		console_append(L"Geen certificaat gevonden, SSL uitgeschakeld");
+	}
+
 	context = lws_create_context(&info);
 
 	console_append(L"Websocket geïnitialiseerd");
