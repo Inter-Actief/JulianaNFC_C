@@ -5,54 +5,54 @@ HWND hwndMain;
 HWND hwndConsole;
 NOTIFYICONDATA nid;
 
-BOOL notify_icon_create()
+BOOL notify_icon_create(HWND hWnd)
 {
-	memset(&nid, 0, sizeof(nid));
+	ZeroMemory(&nid, sizeof(nid));
+
 	nid.cbSize = sizeof(NOTIFYICONDATA);
-	nid.hWnd = hwndMain;
+	nid.hWnd = hWnd;
+	nid.uFlags = NIF_MESSAGE | NIF_ICON | NIF_TIP | NIF_INFO | NIF_SHOWTIP;
 	nid.uCallbackMessage = WM_NOTIFYICON;
-	nid.uFlags = NIF_ICON | NIF_TIP | NIF_MESSAGE | NIF_INFO;
-	//lstrcpy(nid.szInfo, L"Gebruik het icoon in het systeemvak om het statusscherm te openen.");
-	//lstrcpy(nid.szInfoTitle, L"JulianaNFC draait op de achtergrond");
-	lstrcpy(nid.szTip, APPLICATION_NAME);
+	nid.dwInfoFlags = NIIF_USER;
 	LoadIconMetric(g_hInstance, MAKEINTRESOURCE(IDI_MAIN), LIM_SMALL, &nid.hIcon);
+	StringCchCopy(nid.szTip, ARRAYSIZE(nid.szTip), APPLICATION_NAME);
+	Shell_NotifyIcon(NIM_ADD, &nid);
 
-	return Shell_NotifyIcon(NIM_ADD, &nid);
+	nid.uVersion = NOTIFYICON_VERSION_4;
+	return Shell_NotifyIcon(NIM_SETVERSION, &nid);
 }
 
-VOID notify_icon_toast(LPCWSTR lpText, LPCWSTR lpCaption)
+BOOL notify_icon_toast(LPCWSTR lpText, LPCWSTR lpCaption)
 {
-	lstrcpy(nid.szInfo, lpText);
-	lstrcpy(nid.szInfoTitle, lpCaption);
-	Shell_NotifyIcon(NIM_MODIFY, &nid);
+	StringCchCopy(nid.szInfoTitle, ARRAYSIZE(nid.szInfoTitle), lpCaption);
+	StringCchCopy(nid.szInfo, ARRAYSIZE(nid.szInfo), lpText);
+	return Shell_NotifyIcon(NIM_MODIFY, &nid);
 }
 
-VOID notify_icon_destroy()
+BOOL notify_icon_destroy()
 {
-	Shell_NotifyIcon(NIM_DELETE, &nid);
+	return Shell_NotifyIcon(NIM_DELETE, &nid);
 }
 
-INT_PTR CALLBACK SplashProc(HWND hDlg, UINT Msg, WPARAM wParam, LPARAM lParam) {
-	switch (Msg) {
+INT_PTR CALLBACK SplashProc(HWND hwndDlg, UINT uMsg, WPARAM wParam, LPARAM lParam)
+{
+	switch (uMsg) {
 	case WM_INITDIALOG:
-		SetTimer(hDlg, 0, 5000, NULL);
+		SetTimer(hwndDlg, 0, 5000, NULL);
 		return TRUE;
 	case WM_TIMER:
-		DestroyWindow(hDlg);
+		DestroyWindow(hwndDlg);
 		return TRUE;
-	default:
-		return FALSE;
 	}
 
-	return TRUE;
+	return FALSE;
 }
 
-LRESULT WINAPI WndProc(HWND hWnd, UINT uMsg, WPARAM wParam, LPARAM lParam)
+LRESULT CALLBACK WndProc(HWND hWnd, UINT uMsg, WPARAM wParam, LPARAM lParam)
 {
 	switch (uMsg) {
 	case WM_CLOSE:
 		ShowWindow(hWnd, SW_HIDE);
-		notify_icon_toast(L"Gebruik de rechtermuisknop op het icoon in het systeemvak om af te sluiten.", L"Juliana draait op de achtergrond");
 		break;
 	case WM_COMMAND:
 		if (LOWORD(wParam) == ID_QUIT) {
@@ -60,23 +60,23 @@ LRESULT WINAPI WndProc(HWND hWnd, UINT uMsg, WPARAM wParam, LPARAM lParam)
 		}
 		break;
 	case WM_NOTIFYICON:
-		if (lParam == WM_LBUTTONDOWN) {
-			if (!IsWindowVisible(hwndMain)) {
-				ShowWindow(hwndMain, SW_SHOW);
-			}
-			else {
+		switch (LOWORD(lParam)) {
+		case NIN_SELECT:
+			if (IsWindowVisible(hwndMain)) {
 				SetForegroundWindow(hwndMain);
 			}
-		}
-		else if (lParam == WM_RBUTTONDOWN) {
-			HMENU hMenu = LoadMenu(g_hInstance, MAKEINTRESOURCE(IDR_TRAYMENU));
-			hMenu = GetSubMenu(hMenu, 0);
-
-			POINT cur;
-			GetCursorPos(&cur);
-
-			SetForegroundWindow(hwndMain);
-			TrackPopupMenuEx(hMenu, TPM_RIGHTALIGN, cur.x, cur.y, hwndMain, NULL);
+			else {
+				ShowWindow(hwndMain, SW_SHOW);
+			}
+			break;
+		case WM_CONTEXTMENU:
+			{
+				HMENU hMenu = LoadMenu(g_hInstance, MAKEINTRESOURCE(IDR_TRAYMENU));
+				hMenu = GetSubMenu(hMenu, 0);
+				SetForegroundWindow(hwndMain);
+				TrackPopupMenuEx(hMenu, TPM_RIGHTALIGN, LOWORD(wParam), HIWORD(wParam), hwndMain, NULL);
+			}
+			break;
 		}
 		break;
 	default:
@@ -92,10 +92,10 @@ VOID console_append_notime(LPCWSTR lpMsg, ...)
 
 	va_list argptr;
 	va_start(argptr, lpMsg);
-	StringCbVPrintf(buf, sizeof(buf) - 2, lpMsg, argptr);
+	StringCchVPrintf(buf, ARRAYSIZE(buf) - (3 * sizeof(WCHAR)), lpMsg, argptr);
 	va_end(argptr);
 
-	StringCbCat(buf, sizeof(buf), L"\r\n");
+	StringCchCat(buf, ARRAYSIZE(buf), L"\r\n");
 
 	DWORD length = GetWindowTextLength(hwndConsole);
 	SendMessage(hwndConsole, EM_SETSEL, length, length);
@@ -107,14 +107,14 @@ VOID console_append(LPCWSTR lpMsg, ...)
 	WCHAR time[16];
 	GetTimeFormat(LOCALE_USER_DEFAULT, 0, NULL, NULL, time, sizeof(time));
 
-	WCHAR msg[1024];
+	WCHAR msg[1000];
 	va_list argptr;
 	va_start(argptr, lpMsg);
-	StringCbVPrintf(msg, sizeof(msg), lpMsg, argptr);
+	StringCchVPrintf(msg, ARRAYSIZE(msg), lpMsg, argptr);
 	va_end(argptr);
 
 	WCHAR buf[1024];
-	StringCbPrintf(buf, sizeof(buf), L"[%s] %s", time, msg);
+	StringCchPrintf(buf, ARRAYSIZE(buf), L"[%s] %s", time, msg);
 
 	console_append_notime(buf);
 }
@@ -154,7 +154,7 @@ VOID juliana_init(HINSTANCE hInstance)
 	console_append_notime(L"Support: www@inter-actief.net");
 	console_append_notime(L"");
 
-	notify_icon_create();
+	notify_icon_create(hwndMain);
 }
 
 UINT juliana_run()
@@ -177,7 +177,8 @@ UINT juliana_run()
 	return (UINT)msg.wParam;
 }
 
-int WINAPI wWinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, LPWSTR lpCmdLine, int nCmdShow) {
+int WINAPI wWinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, LPWSTR lpCmdLine, int nCmdShow)
+{
 	juliana_init(hInstance);
 
 	nfc_init();

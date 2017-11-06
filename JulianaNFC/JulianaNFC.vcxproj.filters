@@ -45,7 +45,7 @@
     <Image Include="res\main.ico">
       <Filter>Resource Files</Filter>
     </Image>
-    <Image Include="res\juliana.bmp">
+    <Image Include="res\splash.bmp">
       <Filter>Resource Files</Filter>
     </Image>
   </ItemGroup>

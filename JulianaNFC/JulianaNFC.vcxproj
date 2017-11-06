@@ -161,8 +161,8 @@
     <ResourceCompile Include="JulianaNFC.rc" />
   </ItemGroup>
   <ItemGroup>
-    <Image Include="res\juliana.bmp" />
     <Image Include="res\main.ico" />
+    <Image Include="res\splash.bmp" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">

@@ -43,7 +43,7 @@ typedef struct {
 
 typedef const RFIDTAG *LPCRFIDTAG;
 
-VOID notify_icon_toast(LPCWSTR lpText, LPCWSTR lpCaption);
+BOOL notify_icon_toast(LPCWSTR lpText, LPCWSTR lpCaption);
 VOID console_append(LPCWSTR lpMsg, ...);
 
 LONG nfc_init();

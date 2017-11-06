@@ -71,6 +71,7 @@ VOID nfc_refresh_readers()
 {
 	LPWSTR szReaders, szReader;
 	DWORD cchReaders = SCARD_AUTOALLOCATE;
+	WCHAR lastReaderFound[32];
 
 	memset(&rgReaderStates[1], 0, sizeof(SCARD_READERSTATE) * (MAXIMUM_SMARTCARD_READERS - 1));
 	dwReaderCount = 1;
@@ -88,6 +89,7 @@ VOID nfc_refresh_readers()
 			rgReaderStates[i].szReader = szReader;
 			rgReaderStates[i].dwCurrentState = SCARD_STATE_UNAWARE;
 
+			StringCchCopy(lastReaderFound, ARRAYSIZE(lastReaderFound), szReader);
 			console_append(L"Kaartlezer gevonden: %s", szReader);
 
 			szReader += lstrlen(szReader) + 1;
@@ -102,7 +104,7 @@ VOID nfc_refresh_readers()
 	}
 
 	if (dwReaderCount > 1) {
-		notify_icon_toast(L"De kaartlezer is nu klaar voor gebruik.", L"Kaartlezer aangesloten");
+		notify_icon_toast(lastReaderFound, L"Kaartlezer aangesloten");
 	}
 }
 
