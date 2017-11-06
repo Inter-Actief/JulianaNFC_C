@@ -37,5 +37,13 @@ Gebruik om de dependencies te installeren `vcpkg install libwebsockets:x86-windo
 
 Daarna kun je de solution openen in builden, dat zou dan verder probleemloos moeten verlopen.
 
+## Structuur
+ * `build\` - output van Visual Studio
+ * `code\` - broncode
+ * `misc\`
+    * `mkcert\` - script om een certificaatje uit te poepen voor SSL
+    * `msvc\` - solution voor Visual Studio
+    * `nsis\` - [NSIS](http://nsis.sourceforge.net) scriptje voor een installer
+
 ## Vragen?
 Contact mij (Cas Ebbers) of de WWW-commissie van [Inter-Actief](https://www.inter-actief.net).
