@@ -111,7 +111,7 @@ DWORD WINAPI websocket_run(LPVOID lpParam)
 	int n = 0;
 
 	while (n >= 0) {
-		n = lws_service(context, 0);
+		n = lws_service(context, 50);
 	}
 	
 	lws_context_destroy(context);
