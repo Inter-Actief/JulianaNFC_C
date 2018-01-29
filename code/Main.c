@@ -179,6 +179,17 @@ UINT juliana_run()
 
 int WINAPI wWinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, LPWSTR lpCmdLine, int nCmdShow)
 {
+	CreateMutex(NULL, FALSE, APPLICATION_NAME);
+	if (ERROR_ALREADY_EXISTS == GetLastError()) {
+		MessageBox(
+			NULL,
+			APPLICATION_NAME L" is al gestart.",
+			APPLICATION_NAME,
+			MB_OK | MB_ICONERROR
+		);
+		return 0;
+	}
+
 	juliana_init(hInstance);
 
 	nfc_init();
