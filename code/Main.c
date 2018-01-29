@@ -62,12 +62,8 @@ LRESULT CALLBACK WndProc(HWND hWnd, UINT uMsg, WPARAM wParam, LPARAM lParam)
 	case WM_NOTIFYICON:
 		switch (LOWORD(lParam)) {
 		case NIN_SELECT:
-			if (IsWindowVisible(hwndMain)) {
-				SetForegroundWindow(hwndMain);
-			}
-			else {
-				ShowWindow(hwndMain, SW_SHOW);
-			}
+			ShowWindow(hwndMain, SW_SHOWNORMAL);
+			SetForegroundWindow(hwndMain);
 			break;
 		case WM_CONTEXTMENU:
 			{
