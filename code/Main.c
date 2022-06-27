@@ -146,7 +146,7 @@ VOID juliana_init(HINSTANCE hInstance)
 
 	ShowWindow(hwndMain, SW_HIDE);
 
-	console_append_notime(APPLICATION_NAME L" " JULIANANFC_VERSION_STR_FULL L" (by Cas Ebbers)");
+	console_append_notime(APPLICATION_NAME L" " JULIANANFC_VERSION_STR_FULL L" (by Cas Ebbers and Kevin Alberts)");
 	console_append_notime(L"Support: www@inter-actief.net");
 	console_append_notime(L"");
 

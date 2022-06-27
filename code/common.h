@@ -59,3 +59,4 @@ DWORD WINAPI websocket_run(LPVOID lpParam);
 
 #define RFIDTAG_TYPE_A 0x00
 #define RFIDTAG_TYPE_B 0x01
+#define RFIDTAG_TYPE_4 0x02

@@ -70,6 +70,16 @@ VOID websocket_broadcast_tag(LPCRFIDTAG tag) {
 
 		console_append(L"ISO Type A -- UID<%S>  ATQA<%S>  SAK<%02x>", uid, atqa, tag->a.sak);
 	}
+	else if (tag->type == RFIDTAG_TYPE_4) {
+		char atqa[32];
+		char uid[32];
+
+		b2hex(tag->a.atqa, 2, atqa);
+		b2hex(tag->a.uid, tag->a.uidLen, uid);
+		sprintf_s(broadcastMsg, 128, "{\"type\":\"iso-4\",\"atqa\":\"%s\",\"uid\":\"%s\",\"sak\":\"%02x\"}", atqa, uid, tag->a.sak);
+
+		console_append(L"ISO DESFire -- UID<%S>  ATQA<%S>  SAK<%02x>", uid, atqa, tag->a.sak);
+	}
 	else if(tag->type == RFIDTAG_TYPE_B) {
 		char uid[32];
 

@@ -79,9 +79,11 @@
 
     File "..\..\build\Release-Win32\JulianaNFC.exe"
 
-    File "..\..\build\Release-Win32\LIBEAY32.dll"
-    File "..\..\build\Release-Win32\SSLEAY32.dll"
+    File "..\..\build\Release-Win32\libcrypto-3.dll"
+    File "..\..\build\Release-Win32\libssl-3.dll"
+	File "..\..\build\Release-Win32\libuv.dll"
     File "..\..\build\Release-Win32\websockets.dll"
+    File "..\..\build\Release-Win32\zlib1.dll"
 
     !insertmacro MUI_STARTMENU_WRITE_BEGIN Application
 
@@ -94,7 +96,7 @@
     WriteRegStr SHCTX "${UNINST_KEY}" "DisplayIcon" "$INSTDIR\JulianaNFC.exe"
     WriteRegStr SHCTX "${UNINST_KEY}" "DisplayName" "JulianaNFC kaartlezer"
     WriteRegStr SHCTX "${UNINST_KEY}" "InstallLocation" "$INSTDIR"
-    WriteRegStr SHCTX "${UNINST_KEY}" "Publisher" "Cas Ebbers"
+    WriteRegStr SHCTX "${UNINST_KEY}" "Publisher" "Cas Ebbers & Kevin Alberts"
     WriteRegStr SHCTX "${UNINST_KEY}" "UninstallString" "$\"$INSTDIR\uninstall.exe$\" /$MultiUser.InstallMode"
     WriteRegDWORD SHCTX "${UNINST_KEY}" "NoModify" 1
     WriteRegDWORD SHCTX "${UNINST_KEY}" "NoRepair" 1
@@ -117,9 +119,11 @@
     DeleteRegKey SHCTX "Software\JulianaNFC"
 
     Delete "$INSTDIR\JulianaNFC.exe"
-    Delete "$INSTDIR\LIBEAY32.dll"
-    Delete "$INSTDIR\SSLEAY32.dll"
+    Delete "$INSTDIR\libcrypto-3.dll"
+    Delete "$INSTDIR\libssl-3.dll"
+	Delete "$INSTDIR\libuv.dll"
     Delete "$INSTDIR\websockets.dll"
+    Delete "$INSTDIR\zlib1.dll"
     Delete "$INSTDIR\uninstall.exe"
     RMDir "$INSTDIR"
 
